@@ -6,59 +6,76 @@ import Badge from "./components/badge";
 import Alert from "./components/alert";
 import Divider from "./components/divider";
 import InputText from "./components/input-text";
-import SearchIcon from './assets/icons/search.svg?react'
+import SearchIcon from "./assets/icons/search.svg?react";
 import InputCheckbox from "./components/input-checkbox";
+import InputSingleFile from "./components/input-single-file";
+import { useForm } from "react-hook-form";
+import ImageFilePreview from "./components/image-file-preview";
 
 export default function App() {
-	return (
-		<div className="grid gap-7 p-6">
-			<div className="flex gap-3">
-				<Button>Button</Button>
-				<Button variant="secondary">Button</Button>
-				<Button disabled>Button</Button>
-				<Button handling>Loading</Button>
-				<Button icon={ChevronRightIcon}>Próxima Imagem</Button>
-				<Button variant="ghost" size="sm">
-					Button
-				</Button>
-				<Button variant="primary" size="sm">
-					Button
-				</Button>
-			</div>
+  const form = useForm();
+  const file = form.watch("file");
+  const fileSrc = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
 
-			<div className="flex gap-3">
-				<ButtonIcon icon={ChevronLeftIcon} />
-				<ButtonIcon icon={ChevronRightIcon} variant="secondary" />
-			</div>
+  return (
+    <div className="grid gap-7 p-6">
+      <div className="flex gap-3">
+        <Button>Button</Button>
+        <Button variant="secondary">Button</Button>
+        <Button disabled>Button</Button>
+        <Button handling>Loading</Button>
+        <Button icon={ChevronRightIcon}>Próxima Imagem</Button>
+        <Button variant="ghost" size="sm">
+          Button
+        </Button>
+        <Button variant="primary" size="sm">
+          Button
+        </Button>
+      </div>
 
-			<div className="flex gap-3">
-				<Badge>Todos</Badge>
-				<Badge>Natureza</Badge>
-				<Badge>Viagem</Badge>
-				<Badge loading>Viagem</Badge>
-				<Badge loading>Viagem</Badge>
-				<Badge loading>Viagem</Badge>
-			</div>
+      <div className="flex gap-3">
+        <ButtonIcon icon={ChevronLeftIcon} />
+        <ButtonIcon icon={ChevronRightIcon} variant="secondary" />
+      </div>
 
-			<div>
-				<Alert>
-					Tamanho máximo: 50MB
-					<br />
-					Você pode selecionar arquivos em PNG, JPG, JPEG ou WEBP
-				</Alert>
-			</div>
+      <div className="flex gap-3">
+        <Badge>Todos</Badge>
+        <Badge>Natureza</Badge>
+        <Badge>Viagem</Badge>
+        <Badge loading>Viagem</Badge>
+        <Badge loading>Viagem</Badge>
+        <Badge loading>Viagem</Badge>
+      </div>
 
-			<div>
-				<Divider />
-			</div>
+      <div>
+        <Alert>
+          Tamanho máximo: 50MB
+          <br />
+          Você pode selecionar arquivos em PNG, JPG, JPEG ou WEBP
+        </Alert>
+      </div>
 
-			<div>
-				<InputText icon={SearchIcon} placeholder="Buscar foto" />
-			</div>
+      <div>
+        <Divider />
+      </div>
 
-			<div>
-				<InputCheckbox />
-			</div>
-		</div>
-	);
+      <div>
+        <InputText icon={SearchIcon} placeholder="Buscar foto" />
+      </div>
+
+      <div>
+        <InputCheckbox />
+      </div>
+
+      <div>
+        <InputSingleFile
+          replaceBy={<ImageFilePreview src={fileSrc} alt="Image" />}
+          form={form}
+          allowedExtensions={["png", "jpg", "jpeg", "webp"]}
+          maxFileSizeInMB={50}
+          {...form.register("file")}
+        />
+      </div>
+    </div>
+  );
 }
