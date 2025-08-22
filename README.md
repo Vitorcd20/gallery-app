@@ -1,4 +1,4 @@
-# Gallery Plus
+# Gallery App
 
 ## Getting started
 
