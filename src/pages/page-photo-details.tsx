@@ -6,7 +6,7 @@ import type { Photo } from "../context/photos/models/photo";
 import Skeleton from "../components/skeleton";
 import ImagePreview from "../components/image-preview";
 import Button from "../components/button";
-import AlbumsListSelectable from "../context/albums/models/components/albums-list-selectable";
+import AlbumsListSelectable from "../context/albums/components/albums-list-selectable";
 
 export default function PagePhotoDetails() {
   const { id } = useParams();
