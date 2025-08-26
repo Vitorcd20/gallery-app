@@ -7,9 +7,11 @@ import Skeleton from "../components/skeleton";
 import ImagePreview from "../components/image-preview";
 import Button from "../components/button";
 import AlbumsListSelectable from "../context/albums/components/albums-list-selectable";
+import UseAlbums from "../context/albums/hooks/use-albums";
 
 export default function PagePhotoDetails() {
-  const { id } = useParams();
+  const {id} = useParams();
+  const {albums, isLoadingAlbums} = UseAlbums()
 
   // for tests
   const isLoadingPhoto = false;
@@ -58,11 +60,7 @@ export default function PagePhotoDetails() {
            <div className="py-3">
             <Text as="h3" variant="heading-medium" className="mb-6">Albums</Text>
 
-             <AlbumsListSelectable photo={photo} albums={[
-              { id: "321", title: "Album 1" },
-              { id: "123", title: "Album 2" },
-              { id: "455", title: "Album 3" },
-             ]} />
+             <AlbumsListSelectable photo={photo} albums={albums} loading={isLoadingAlbums} />
            </div>
 
         </div>
