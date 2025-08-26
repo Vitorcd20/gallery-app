@@ -52,7 +52,7 @@ export default function AlbumNewDialog({ trigger }: AlbumNewDialogProps) {
         <DialogHeader>Create Album</DialogHeader>
 
         <DialogBody className="flex flex-col gap-5">
-          <InputText placeholder="Adicione um título" />
+          <InputText placeholder="Choose a title" />
 
           <div className="space-y-3">
             <Text as="div" variant="label-small" className="mb-3">
