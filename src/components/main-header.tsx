@@ -6,6 +6,7 @@ import Button from "./button";
 import PhotosSearch from "./photos-search";
 import Divider from "./divider";
 import PhotoNewDialog from "../context/photos/components/photo-new-dialog";
+import AlbumNewDialog from "../context/albums/components/album-new-dialog";
 
 interface MainHeaderProps extends React.ComponentProps<"div"> {}
 
@@ -25,7 +26,9 @@ export default function MainHeader({ className, ...props }: MainHeaderProps) {
 
       <div className="flex items-center gap-3">
         <PhotoNewDialog trigger={<Button>New Photo</Button>} />
-        <Button variant="secondary">Create Album</Button>
+        <AlbumNewDialog
+          trigger={<Button variant="secondary">Create album</Button>}
+        />
       </div>
     </Container>
   );
