@@ -1,5 +1,5 @@
 import Container from "./container";
-import Logo from "../assets/images/galeria-plus-full-logo.svg?react";
+import Logo from "../assets/icons/favicon.svg?react";
 import { Link } from "react-router";
 import cx from "classnames";
 import Button from "./button";
