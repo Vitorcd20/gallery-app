@@ -16,23 +16,41 @@ import InputText from "../../../components/input-text";
 import Skeleton from "../../../components/skeleton";
 import Text from "../../../components/text";
 import UseAlbums from "../../albums/hooks/use-albums";
+import { photoNewFormSchema, type PhotoNewFormSchema } from "../schemas";
+import {zodResolver} from '@hookform/resolvers/zod'
 
 interface PhotoNewDialogProps {
   trigger: React.ReactNode;
 }
 
 export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
-  const form = useForm()
+  const form = useForm<PhotoNewFormSchema>({
+    resolver: zodResolver(photoNewFormSchema)
+  })
+
   const {albums, isLoadingAlbums} = UseAlbums()
+
+  const file = form.watch("file");
+  const fileSource = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
+
+  function handleSubmit(payload: PhotoNewFormSchema) {
+    console.log(payload)
+  }
 
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
         <DialogHeader>Upload a Photo</DialogHeader>
 
         <DialogBody className="flex flex-col gap-5">
-          <InputText placeholder="Choose a title" maxLength={255} />
+          <InputText 
+          placeholder="Choose a title" 
+          maxLength={255} 
+          error={form.formState.errors.title?.message}
+          {...form.register("title")}
+          />
 
           <Alert>
             Maximum size: 50MB
@@ -44,7 +62,9 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
             form={form}
             allowedExtensions={["jpg", "jpeg", "png"]}
             maxFileSizeInMB={50}
-            replaceBy={<ImagePreview className="w-full h-56" />}
+            replaceBy={<ImagePreview src={fileSource} className="w-full h-56" />}
+            error={form.formState.errors.file?.message}
+            {...form.register("file")}
           />
 
           <div className="space-y-3">
@@ -78,8 +98,9 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
 
-          <Button>Attach</Button>
+          <Button type="submit">Attach</Button>
         </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
