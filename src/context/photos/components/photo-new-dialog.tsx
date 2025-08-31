@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import Alert from "../../../components/alert";
 import Button from "../../../components/button";
@@ -19,6 +19,7 @@ import Text from "../../../components/text";
 import UseAlbums from "../../albums/hooks/use-albums";
 import { photoNewFormSchema, type PhotoNewFormSchema } from "../schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import UsePhoto from "../hooks/use-photo";
 
 interface PhotoNewDialogProps {
   trigger: React.ReactNode;
@@ -26,11 +27,14 @@ interface PhotoNewDialogProps {
 
 export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [isCreatingPhoto, setIsCreatingPhoto] = useTransition();
+  
   const form = useForm<PhotoNewFormSchema>({
     resolver: zodResolver(photoNewFormSchema),
   });
 
   const { albums, isLoadingAlbums } = UseAlbums();
+  const { createPhoto } = UsePhoto();
 
   const file = form.watch("file");
   const fileSource = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
@@ -57,7 +61,10 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
   }
 
   function handleSubmit(payload: PhotoNewFormSchema) {
-    console.log(payload);
+    setIsCreatingPhoto(async () => {
+      await createPhoto(payload);
+      setModalOpen(false);
+    });
   }
 
   return (
@@ -125,10 +132,18 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="secondary">Cancel</Button>
+              <Button variant="secondary" disabled={isCreatingPhoto}>
+                Cancel
+              </Button>
             </DialogClose>
 
-            <Button type="submit">Attach</Button>
+            <Button
+              type="submit"
+              disabled={isCreatingPhoto}
+              handling={isCreatingPhoto}
+            >
+              {isCreatingPhoto ? "adding..." : "Add"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
