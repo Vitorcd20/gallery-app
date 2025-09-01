@@ -3,6 +3,7 @@ import { api, fetcher } from "../../../helpers/api";
 import type { Photo } from "../models/photo";
 import type { PhotoNewFormSchema } from "../schemas";
 import { toast } from "sonner";
+import usePhotoAlbums from "./use-photos-albums";
 
 interface PhotoDetailResponse extends Photo {
   nextPhotoId?: string;
@@ -16,10 +17,11 @@ export default function UsePhoto(id?: string) {
     enabled: !!id,
   });
 
-   const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
+
+  const { managePhotoAlbum } = usePhotoAlbums();
 
   async function createPhoto(payload: PhotoNewFormSchema) {
-    
     try {
       const { data: photo } = await api.post<Photo>("/photos", {
         title: payload.title,
@@ -38,25 +40,23 @@ export default function UsePhoto(id?: string) {
       );
 
       if (payload.albumsIds && payload.albumsIds.length > 0) {
-        await api.put(`/photos/${photo.id}/albums`, {
-          albumsIds: payload.albumsIds,
-        });
+        await managePhotoAlbum(photo.id, payload.albumsIds);
       }
 
       queryClient.invalidateQueries({ queryKey: ["photos"] });
 
-      toast.success("Photo added successfully!")
+      toast.success("Photo added successfully!");
     } catch (error) {
-      toast.error("Error creating photo")
+      toast.error("Error creating photo");
       throw error;
     }
   }
-  
+
   return {
     photo: data,
     nextPhotoId: data?.nextPhotoId,
     previousPhotoId: data?.previousPhotoId,
     isLoadingPhoto: isLoading,
-    createPhoto
+    createPhoto,
   };
 }
