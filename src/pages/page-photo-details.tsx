@@ -9,13 +9,36 @@ import AlbumsListSelectable from "../context/albums/components/albums-list-selec
 import UseAlbums from "../context/albums/hooks/use-albums";
 import UsePhoto from "../context/photos/hooks/use-photo";
 import type { Photo } from "../context/photos/models/photo";
+import { useState, useTransition } from "react";
+import DeletePhotoModal from "../components/delete-photo-modal";
 
 export default function PagePhotoDetails() {
   const { id } = useParams();
-  const { photo, nextPhotoId, previousPhotoId, isLoadingPhoto } = UsePhoto(id);
-
+  const { photo, nextPhotoId, previousPhotoId, isLoadingPhoto, deletePhoto } = UsePhoto(id);
   const { albums, isLoadingAlbums } = UseAlbums();
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isDeletingPhoto, setIsDeletingPhoto] = useTransition();
+
+  function handleDeleteClick() {
+    setShowConfirmModal(true);
+  }
+
+  function handleConfirmDelete() {
+    setIsDeletingPhoto(async () => {
+      try {
+        await deletePhoto(photo!.id);
+        setShowConfirmModal(false);
+      } catch (error) {
+        console.error("Error deleting photo:", error);
+        setShowConfirmModal(false);
+      }
+    });
+  }
+
+  function handleCancelDelete() {
+    setShowConfirmModal(false);
+  }
   if (!isLoadingPhoto && !photo) {
     return <div>Photo not found!</div>;
   }
@@ -52,7 +75,13 @@ export default function PagePhotoDetails() {
             )}
 
             {!isLoadingPhoto ? (
-              <Button variant="destructive">Remove</Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteClick}
+                disabled={isDeletingPhoto}
+              >
+                Delete
+              </Button>
             ) : (
               <Skeleton className="w-20 h-10" />
             )}
@@ -71,6 +100,15 @@ export default function PagePhotoDetails() {
           </div>
         </div>
       </Container>
+
+      <DeletePhotoModal
+        isOpen={showConfirmModal}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Confirm Deletion"
+        message="Do you really want to delete this photo?"
+        isLoading={isDeletingPhoto}
+      />
     </>
   );
 }
