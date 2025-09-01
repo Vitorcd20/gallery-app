@@ -5,7 +5,6 @@ import Text from "../../../components/text";
 import type { Photo } from "../../photos/models/photo";
 import type { Album } from "../models/album";
 
-
 interface AlbumsListSelectableProps {
   loading?: boolean;
   albums: Album[];
@@ -47,7 +46,7 @@ export default function AlbumsListSelectable({
               </Text>
               <InputCheckbox
                 defaultChecked={isChecked(album.id)}
-                onClick={() => handlePhotoOnAlbums(album.id)}
+                onChange={() => handlePhotoOnAlbums(album.id)}
               />
             </div>
             {index !== albums.length - 1 && <Divider className="mt-4" />}
